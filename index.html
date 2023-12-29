@@ -1,0 +1,32 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desenare Instrumente Multiple</title>
+  <!-- Utilizarea Bootstrap doar pentru partea de CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container" >
+    <button id="newTemplateBtn" class="btn btn-primary mr-2">Nou Sablon</button>
+    <div class="btn-group">
+      <button id="ellipseBtn" class="btn btn-secondary">Elipsa</button>
+      <button id="rectangleBtn" class="btn btn-secondary">Dreptunghi</button>
+      <button id="lineBtn" class="btn btn-secondary">Linie</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <canvas id="canvas" width="800" height="600" style="background-color: #ffffff"></canvas>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+

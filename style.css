@@ -1,0 +1,11 @@
+/* styles.css */
+body {
+  background-color: #ffe4c4; /* Culoarea crem pentru fundalul întregii pagini */
+}
+
+
+/* Stilizare pentru butonul selectat */
+.btn-group .btn.active {
+  background-color: #007bff;
+  color: #fff;
+}
