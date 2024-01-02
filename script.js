@@ -1,127 +1,236 @@
 // script.js
 document.addEventListener("DOMContentLoaded", function() {
-  const canvas = document.getElementById("canvas");
-  const context = canvas.getContext("2d");
-  let isDrawing = false;
-  let selectedTool = "ellipse"; // Instrumentul implicit
-  let shapes = []; // Tablou pentru stocarea formelor desenate
-  let startX, startY;
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+    let isDrawing = false;
+    let selectedTool = "elipsa"; // instrumentul implicit pentru desenare
+    let shapes = []; // tablou pentru stocarea formelor desenate
+    let selectedColor = "#000000"; // culoarea implicita pentru forme
+    let selectedLineWidth = 5; // grosimea implicita a formelor
+    let fillBool = false;
+    let startX, startY;
+    let bgColor = "#ffffff";
 
-  // Butoane
-  const newTemplateBtn = document.getElementById("newTemplateBtn");
-  const ellipseBtn = document.getElementById("ellipseBtn");
-  const rectangleBtn = document.getElementById("rectangleBtn");
-  const lineBtn = document.getElementById("lineBtn");
-  ellipseBtn.classList.add("active"); //setez selectia instrumentului initial la incarcare.
+    // Butoane
+    const btnSablonNou = document.getElementById("btnSablonNou");
+    const colorPickerFundal = document.getElementById("colorPickerFundal");
 
-  newTemplateBtn.addEventListener("click", createNewTemplate);
-  ellipseBtn.addEventListener("click", () => setDrawingTool("ellipse"));
-  rectangleBtn.addEventListener("click", () => setDrawingTool("rectangle"));
-  lineBtn.addEventListener("click", () => setDrawingTool("line"));
+    const colorPicker = document.getElementById("colorPicker");
+    const fillCheckBox = document.getElementById("umplere");
+    const lineWidthSlider = document.getElementById("lineWidthSlider");
 
-  function createNewTemplate() {
-    shapes = []; // Resetarea formelor desenate
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    redrawShapes(); // Desenarea formelor salvate
-  }
+    const btnElipsa = document.getElementById("btnElipsa");
+    const btnDreptunghi = document.getElementById("btnDreptunghi");
+    const btnLinie = document.getElementById("btnLinie");
+    btnElipsa.classList.add("active"); //setez selectia instrumentului initial la incarcare.
 
-   function setDrawingTool(tool) {
-    selectedTool = tool;
-    // Adaugăm clasa 'active' la butonul selectat și o eliminăm de la celelalte
-    ellipseBtn.classList.remove("active");
-    rectangleBtn.classList.remove("active");
-    lineBtn.classList.remove("active");
+    const btnExportPNG = document.getElementById("btnExportPNG");
+    const btnExportJPEG = document.getElementById("btnExportJPEG");
 
-    if (tool === "ellipse") {
-      ellipseBtn.classList.add("active");
-    } else if (tool === "rectangle") {
-      rectangleBtn.classList.add("active");
-    } else if (tool === "line") {
-      lineBtn.classList.add("active");
+    //evenimente
+    btnSablonNou.addEventListener("click", createNewTemplate);
+    colorPickerFundal.addEventListener("input", updateBackgroundColor);
+
+    colorPicker.addEventListener("input", updateColor);
+    fillCheckBox.addEventListener("change", updateFillOption);
+    lineWidthSlider.addEventListener("input", updateLineWidth);
+
+    btnElipsa.addEventListener("click", () => setDrawingTool("elipsa"));
+    btnDreptunghi.addEventListener("click", () => setDrawingTool("dreptunghi"));
+    btnLinie.addEventListener("click", () => setDrawingTool("linie"));
+
+    btnExportPNG.addEventListener("click", () => exportImagine("png"));
+    btnExportJPEG.addEventListener("click", () => exportImagine("jpeg"));
+
+	//keybind-uri
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mousemove", draw);
+
+	//functii initiere
+    createNewTemplate();
+
+    function createNewTemplate() {
+        shapes = []; // resetare tablou forme
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        saveShape("dreptunghi", 0, 0, canvas.width, canvas.height, bgColor, 0, true); //forma pentru fundal(folosita la culoare de fundal a sablonului)
+        redrawShapes(); // desenarea formelor salvate in tablou
     }
-  }
 
-  canvas.addEventListener("mousedown", startDrawing);
-  canvas.addEventListener("mouseup", stopDrawing);
-  canvas.addEventListener("mousemove", draw);
+	//functe ce seteaza pe front care este instrumentul activ.
+    function setDrawingTool(tool) {
+        selectedTool = tool;
+        btnElipsa.classList.remove("active");
+        btnDreptunghi.classList.remove("active");
+        btnLinie.classList.remove("active");
 
-  function startDrawing(e) {
-    isDrawing = true;
-    startX = e.clientX - canvas.getBoundingClientRect().left;
-    startY = e.clientY - canvas.getBoundingClientRect().top;
-  }
-
-  function stopDrawing() {
-    if (!isDrawing) return;
-
-    isDrawing = false;
-    const endX = event.clientX - canvas.getBoundingClientRect().left;
-    const endY = event.clientY - canvas.getBoundingClientRect().top;
-    saveShape(startX, startY, endX, endY); // Salvarea formei la eliberare
-    context.beginPath(); // Întrerupe desenarea continuă pentru fiecare formă
-    redrawShapes(); // Desenarea formelor salvate
-  }
-
-  function draw(e) {
-    if (!isDrawing) return;
-
-    const mouseX = e.clientX - canvas.getBoundingClientRect().left;
-    const mouseY = e.clientY - canvas.getBoundingClientRect().top;
-
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
-    redrawShapes(); // Desenarea formelor salvate
-
-    if (selectedTool === "ellipse") {
-      drawEllipse(startX, startY, mouseX, mouseY);
-    } else if (selectedTool === "rectangle") {
-      drawRectangle(startX, startY, mouseX, mouseY);
-    } else if (selectedTool === "line") {
-      drawLine(startX, startY, mouseX, mouseY);
+        if (tool === "elipsa") {
+            btnElipsa.classList.add("active");
+        } else if (tool === "dreptunghi") {
+            btnDreptunghi.classList.add("active");
+        } else if (tool === "linie") {
+            btnLinie.classList.add("active");
+        }
     }
-  }
 
-  function saveShape(startX, startY, endX, endY) {
-    // Salvarea informațiilor despre formă în tablou
-    shapes.push({ tool: selectedTool, startX, startY, endX, endY });
-  }
+	
+	//functie event pentru inceput desen.
+    function startDrawing() {
+        isDrawing = true;
+        startX = event.clientX - canvas.getBoundingClientRect().left;
+        startY = event.clientY - canvas.getBoundingClientRect().top;
+    }
 
-  function redrawShapes() {
-    // Redesenarea tuturor formelor din tablou
-    shapes.forEach(shape => {
-      const { tool, startX, startY, endX, endY } = shape;
-      if (tool === "ellipse") {
-        drawEllipse(startX, startY, endX, endY);
-      } else if (tool === "rectangle") {
-        drawRectangle(startX, startY, endX, endY);
-      } else if (tool === "line") {
-        drawLine(startX, startY, endX, endY);
-      }
-    });
-  }
+	//functie pentru actualizarea culorii din color picker.
+    function updateColor() {
+        selectedColor = colorPicker.value;
+    }
 
-  function drawEllipse(startX, startY, endX, endY) {
-    const width = endX - startX;
-    const height = endY - startY;
+	//functie pentru actualizarea grosimii din range slider.
+    function updateLineWidth() {
+        selectedLineWidth = lineWidthSlider.value;
+    }
 
-    context.beginPath();
-    context.ellipse(startX + width / 2, startY + height / 2, Math.abs(width / 2), Math.abs(height / 2), 0, 0, 2 * Math.PI);
-    context.stroke();
-  }
+	//functie ce actualizeaza starea booleana a check box-ului pentru umplere forma.
+    function updateFillOption() {
+        fillBool = fillCheckBox.checked;
+    }
 
-  function drawRectangle(startX, startY, endX, endY) {
-    const width = endX - startX;
-    const height = endY - startY;
+	//functie ce actualizeaza culoarea de fundal a sablonului(a primei forme din tablou)
+	//prin crearea unei noi forme de dreptunghi cu stare de umplere manevrez culoarea fundalului sablonului.
+    function updateBackgroundColor() {
+        bgColor = colorPickerFundal.value;
+        shapes[0].color = bgColor;
+        redrawShapes();
+    }
 
-    context.beginPath();
-    context.rect(startX, startY, width, height);
-    context.stroke();
-  }
 
-  function drawLine(startX, startY, endX, endY) {
-    context.beginPath();
-    context.moveTo(startX, startY);
-    context.lineTo(endX, endY);
-    context.stroke();
-  }
+    //Functie event pentru oprirea desenarii
+    function stopDrawing() {
+        if (!isDrawing) return; //verificare eveniment daca este in timpul unei desenari
+
+        isDrawing = false;
+        const endX = event.clientX - canvas.getBoundingClientRect().left;
+        const endY = event.clientY - canvas.getBoundingClientRect().top;
+        saveShape(selectedTool, startX, startY, endX, endY, selectedColor, selectedLineWidth, fillBool); // salvare forma pe apelul evenimentului
+        context.beginPath(); //intrerupe desenarea continua(cu preview)
+        redrawShapes(); // desenarea formelor salvate in tablou
+    }
+
+    // Functie event pentru desenare.
+    function draw() {
+        if (!isDrawing) return;
+
+        const endX = event.clientX - canvas.getBoundingClientRect().left;
+        const endY = event.clientY - canvas.getBoundingClientRect().top;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        redrawShapes(); // Desenarea formelor salvate
+
+        context.strokeStyle = selectedColor; // Setarea culorii liniei
+        context.lineWidth = selectedLineWidth;
+
+        if (selectedTool === "elipsa") {
+            drawEllipse(startX, startY, endX, endY);
+        } else if (selectedTool === "dreptunghi") {
+            drawRectangle(startX, startY, endX, endY);
+        } else if (selectedTool === "linie") {
+            drawLine(startX, startY, endX, endY);
+        }
+    }
+
+
+    //functie pentru salvarea unei forme in tablou.
+    function saveShape(selectedTool, startX, startY, endX, endY, selectedColor, selectedLineWidth, fillBool) {
+        shapes.push({
+            tool: selectedTool,
+            startX,
+            startY,
+            endX,
+            endY,
+            color: selectedColor,
+            lineWidth: selectedLineWidth,
+            fill: fillBool
+        });
+    }
+
+	//functie pentru (re)desenarea formelor din tablou
+    function redrawShapes() {
+        shapes.forEach(shape => {
+            const {
+                tool,
+                startX,
+                startY,
+                endX,
+                endY,
+                color,
+                lineWidth,
+                fill
+            } = shape;
+            context.strokeStyle = color;
+            context.lineWidth = lineWidth;
+
+            if (fill) {
+                context.fillStyle = color;
+            } else {
+                context.fillStyle = "transparent";
+            }
+
+            if (tool === "elipsa") {
+                drawEllipse(startX, startY, endX, endY, fill);
+            } else if (tool === "dreptunghi") {
+                drawRectangle(startX, startY, endX, endY, fill);
+            } else if (tool === "linie") {
+                drawLine(startX, startY, endX, endY);
+            }
+        });
+    }
+
+    // funtie desenare elipsa
+    function drawEllipse(startX, startY, endX, endY, fill = false) {
+        const width = endX - startX; //calculare latime
+        const height = endY - startY; //calculare inaltime
+
+        context.beginPath();
+        context.ellipse(startX + width / 2, startY + height / 2, Math.abs(width / 2), Math.abs(height / 2), 0, 0, 2 * Math.PI);
+
+        if (fill) { //conditie oarecum stupid pusa deoarece la apelarea pe desenare preview nu va aparea dar este utila la redesenarea formelor din tablou.
+            context.fill(); //umplere
+        } else {
+            context.stroke(); // contur
+        }
+    }
+
+	// functie desenare dreptunghi
+    function drawRectangle(startX, startY, endX, endY, fill = false) {
+        const width = endX - startX; //calculare latime
+        const height = endY - startY; //calculare inaltime
+
+        context.beginPath();
+        context.rect(startX, startY, width, height);
+
+        if (fill) { //conditie oarecum stupid pusa deoarece la apelarea pe desenare preview nu va aparea dar este utila la redesenarea formelor din tablou.
+            context.fill(); //umplere
+        } else {
+            context.stroke(); //contur
+        }
+    }
+
+	//functie desenare linie
+    function drawLine(startX, startY, endX, endY) {
+        context.beginPath();
+        context.moveTo(startX, startY);
+        context.lineTo(endX, endY);
+        context.stroke();
+    }
+
+    function exportImagine(type) {
+        const dataURL = canvas.toDataURL(`image/${type}`);
+
+        const a = document.createElement("a");
+		
+        a.href = dataURL;
+        a.download = `sablon.${type}`;
+        a.click();
+    }
 });
