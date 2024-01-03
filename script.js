@@ -42,12 +42,12 @@ document.addEventListener("DOMContentLoaded", function() {
     btnExportPNG.addEventListener("click", () => exportImagine("png"));
     btnExportJPEG.addEventListener("click", () => exportImagine("jpeg"));
 
-	//keybind-uri
+    //keybind-uri
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mouseup", stopDrawing);
     canvas.addEventListener("mousemove", draw);
 
-	//functii initiere
+    //functii initiere
     createNewTemplate();
 
     function createNewTemplate() {
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
         redrawShapes(); // desenarea formelor salvate in tablou
     }
 
-	//functe ce seteaza pe front care este instrumentul activ.
+    //functe ce seteaza pe front care este instrumentul activ.
     function setDrawingTool(tool) {
         selectedTool = tool;
         btnElipsa.classList.remove("active");
@@ -73,31 +73,31 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-	
-	//functie event pentru inceput desen.
+
+    //functie event pentru inceput desen.
     function startDrawing() {
         isDrawing = true;
         startX = event.clientX - canvas.getBoundingClientRect().left;
         startY = event.clientY - canvas.getBoundingClientRect().top;
     }
 
-	//functie pentru actualizarea culorii din color picker.
+    //functie pentru actualizarea culorii din color picker.
     function updateColor() {
         selectedColor = colorPicker.value;
     }
 
-	//functie pentru actualizarea grosimii din range slider.
+    //functie pentru actualizarea grosimii din range slider.
     function updateLineWidth() {
         selectedLineWidth = lineWidthSlider.value;
     }
 
-	//functie ce actualizeaza starea booleana a check box-ului pentru umplere forma.
+    //functie ce actualizeaza starea booleana a check box-ului pentru umplere forma.
     function updateFillOption() {
         fillBool = fillCheckBox.checked;
     }
 
-	//functie ce actualizeaza culoarea de fundal a sablonului(a primei forme din tablou)
-	//prin crearea unei noi forme de dreptunghi cu stare de umplere manevrez culoarea fundalului sablonului.
+    //functie ce actualizeaza culoarea de fundal a sablonului(a primei forme din tablou)
+    //prin crearea unei noi forme de dreptunghi cu stare de umplere manevrez culoarea fundalului sablonului.
     function updateBackgroundColor() {
         bgColor = colorPickerFundal.value;
         shapes[0].color = bgColor;
@@ -143,6 +143,7 @@ document.addEventListener("DOMContentLoaded", function() {
     //functie pentru salvarea unei forme in tablou.
     function saveShape(selectedTool, startX, startY, endX, endY, selectedColor, selectedLineWidth, fillBool) {
         shapes.push({
+            id: shapes.length + 1,
             tool: selectedTool,
             startX,
             startY,
@@ -154,10 +155,16 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-	//functie pentru (re)desenarea formelor din tablou
+    //functie pentru (re)desenarea formelor din tablou
     function redrawShapes() {
-        shapes.forEach(shape => {
+
+        const figureList = document.getElementById("figureList");
+        figureList.innerHTML = ""; // Curățare lista
+
+        shapes.forEach((shape, index) => {
+
             const {
+                id,
                 tool,
                 startX,
                 startY,
@@ -167,6 +174,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 lineWidth,
                 fill
             } = shape;
+
+            // Adăugare elemente în listă
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+            listItem.innerHTML = `<strong>ID ${id}:</strong> ${tool} - ${fill ? "Umplere" : "Contur"} - Grosime: ${lineWidth}`;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "btn btn-danger btn-sm";
+            deleteButton.innerHTML = "Sterge";
+            deleteButton.addEventListener("click", () => deleteShape(index));
+
+            listItem.appendChild(deleteButton);
+            figureList.appendChild(listItem);
+
+
             context.strokeStyle = color;
             context.lineWidth = lineWidth;
 
@@ -186,6 +208,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    function deleteShape(index) {
+        if (index === 0) return;
+        shapes.splice(index, 1);
+        redrawShapes(); // Redesenare după ștergere
+    }
+
     // funtie desenare elipsa
     function drawEllipse(startX, startY, endX, endY, fill = false) {
         const width = endX - startX; //calculare latime
@@ -201,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-	// functie desenare dreptunghi
+    // functie desenare dreptunghi
     function drawRectangle(startX, startY, endX, endY, fill = false) {
         const width = endX - startX; //calculare latime
         const height = endY - startY; //calculare inaltime
@@ -216,7 +244,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-	//functie desenare linie
+    //functie desenare linie
     function drawLine(startX, startY, endX, endY) {
         context.beginPath();
         context.moveTo(startX, startY);
@@ -228,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const dataURL = canvas.toDataURL(`image/${type}`);
 
         const a = document.createElement("a");
-		
+
         a.href = dataURL;
         a.download = `sablon.${type}`;
         a.click();
