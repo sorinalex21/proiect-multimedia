@@ -2,18 +2,3 @@
 body {
   background-color: #ffe4c4; /* Culoarea crem pentru fundalul întregii pagini */
 }
-
-.custom-checkbox-label {
-  margin-right: -70px; /* Ajustează această valoare la necesitatea ta */
-}
-
-.custom-checkbox-input {
-  margin-left: 0;
-}
-
-
-/* Stilizare pentru butonul selectat */
-.btn-group .btn.active {
-  background-color: #007bff;
-  color: #fff;
-}

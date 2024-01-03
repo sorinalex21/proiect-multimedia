@@ -12,35 +12,39 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <button id="btnSablonNou" class="btn btn-primary"> Sablon nou </button>
       <div class="container">
-        <label class="form-check-label ml-4 mr-0" for="colorPickerFundal" class="mr-0">Culoare fundal:</label>
+        <label class="form-check-label ml-5 mr-0" for="colorPickerFundal" class="mr-0">Culoare fundal:</label>
         <input type="color" id="colorPickerFundal" value="#ffffff">
-        <label class="form-check-label ml-4 mr-0" for="colorPicker" class="mr-0">Culoare forma:</label>
+        <label class="form-check-label ml-5 mr-0" for="colorPicker" class="mr-0">Culoare forma:</label>
         <input type="color" id="colorPicker" value="#000000">
-        <label class="form-check-label ml-4 mr-0" for="umplere" class="mr-0">Umplere:</label>
+        <label class="form-check-label ml-5 mr-0" for="umplere" class="mr-0">Umplere:</label>
         <input type="checkbox" id="umplere" class="">
-		<label class="form-check-label ml-4 mr-0" for="lineWidthSlider" class="mr-0">Grosime:</label>
-        <input type="range" id="lineWidthSlider" min="1" max="20" value="5">
-		<label class="form-check-label ml-3 mr-0" class="">Forma:</label>
+        <label class="form-check-label ml-5 mr-0" for="sliderGrosime" class="mr-0">Grosime:</label>
+        <input type="range" id="sliderGrosime" min="1" max="20" value="5">
+        <label class="form-check-label ml-5 mr-0" class="">Forma:</label>
         <div class="btn-group">
           <div class="btn-group">
             <button id="btnElipsa" class="btn btn-outline-secondary">
-              <img src="media/elipsa.png" width="20" height="20"> Elipsa </button>
+              <img src="media/elipsa.png" width="20" height="20">
+            </button>
             <button id="btnDreptunghi" class="btn btn-outline-secondary">
-              <img src="media/dreptunghi.png" width="20" height="20"> Dreptunghi </button>
+              <img src="media/dreptunghi.png" width="20" height="20">
+            </button>
             <button id="btnLinie" class="btn btn-outline-secondary">
-              <img src="media/linie.png" width="20" height="20"> Linie </button>
+              <img src="media/linie.png" width="20" height="20">
+            </button>
           </div>
         </div>
       </div>
-	  <div class="btn-group ml-auto">
-	  <label class="form-check-label mt-1 mr-1" class="">Save:</label>
-			  <button id="btnExportPNG" class="btn btn-success ml-1">.PNG</button>
-			  <button id="btnExportJPEG" class="btn btn-success">.JPEG</button>
-		</div>
+      <button id="btnAfisareIduri" class="btn btn-warning">Afisare id forme</button>
+      <div class="btn-group ml-auto">
+        <label class="form-check-label mt-1 mr-1" class="">Save:</label>
+        <button id="btnExportPNG" class="btn btn-success ml-1">.PNG</button>
+        <button id="btnExportJPEG" class="btn btn-success">.JPEG</button>
+      </div>
     </nav>
     <div class="container mt-4">
       <canvas id="canvas" width="800" height="600" style="background-color: #ffffff"></canvas>
-	  <ul id="figureList" class="list-group mt-3"></ul>
+      <ul id="listaFiguri" class="list-group mt-3"></ul>
     </div>
     <script src="script.js"></script>
   </body>
