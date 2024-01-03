@@ -1,4 +1,4 @@
-// script.js
+//script comentariu
 document.addEventListener("DOMContentLoaded", function() {
     //variabile generale
     const canvas = document.getElementById("canvas");
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function createNewTemplate() {
         shapes = []; // resetare tablou forme
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height); //curata sablonul
         saveShape("dreptunghi", 0, 0, canvas.width, canvas.height, bgColor, 0, true); //forma pentru fundal(folosita la culoare de fundal a sablonului)
         redrawShapes(); // desenarea formelor salvate in tablou
     }
@@ -124,8 +124,9 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!isDrawing) return; //verificare eveniment daca este in timpul unei desenari
 
         isDrawing = false;
-        const endX = event.clientX - canvas.getBoundingClientRect().left; //functie generala de obtinere a coordonatei de final pentru latime.
-        const endY = event.clientY - canvas.getBoundingClientRect().top; //functie generala de obtinere a coordonatei de final pentru inaltime.
+        const endX = event.clientX - canvas.getBoundingClientRect().left; //functie generala de obtinere a coordonatei de final pentru latime.(Practic obtine coordonata relativa pentru latime)
+        const endY = event.clientY - canvas.getBoundingClientRect().top; //functie generala de obtinere a coordonatei de final pentru inaltime. -//- pentru inaltime.
+		//practic obtine coordonatele finale X si Y din momentul apelarii evenimentului si scade din aceasta coordonata stanga si top a dreptunghiului sablonului. Astfel obtin coordonatele relative de final ale formei.
         saveShape(selectedTool, startX, startY, endX, endY, selectedColor, selectedGrosime, fillBool); // salvare forma pe apelul evenimentului
         context.beginPath(); //intrerupe desenarea continua(cu preview)
         redrawShapes(); // desenarea formelor salvate in tablou
